@@ -1,0 +1,174 @@
+:root {
+    --primary: #00d2ff;
+    --secondary: #0061ff;
+    --accent: #ff007a;
+    --bg: #0b0e14;
+    --card: #1a1f29;
+    --text: #e2e8f0;
+    --success: #2ed573;
+    --danger: #ff4757;
+}
+
+body {
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.app-container {
+    width: 100%;
+    max-width: 480px;
+}
+
+/* Stats Section */
+.header-stats {
+    background: linear-gradient(145deg, #1e293b, #0f172a);
+    padding: 25px;
+    border-radius: 24px;
+    border: 1px solid #334155;
+    text-align: center;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+}
+
+.rank-badge {
+    background: var(--primary);
+    color: #000;
+    padding: 5px 15px;
+    border-radius: 50px;
+    font-weight: 800;
+    font-size: 0.75rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.xp-display {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin: 15px 0 10px;
+}
+
+.xp-label { color: #64748b; font-size: 1rem; }
+
+.progress-container {
+    background: #020617;
+    height: 12px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    width: 0%;
+    height: 100%;
+    transition: width 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Panels & Sections */
+.control-panel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 0 5px;
+}
+
+.panel-title { font-size: 0.75rem; color: #475569; text-transform: uppercase; letter-spacing: 1px; }
+
+.btn-group { display: flex; gap: 8px; }
+
+.btn-alt, .btn-danger {
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    cursor: pointer;
+    border: 1px solid #334155;
+    background: transparent;
+    transition: 0.2s;
+}
+
+.btn-alt { color: #94a3b8; }
+.btn-danger { color: var(--danger); border-color: var(--danger); }
+.btn-alt:hover { background: #334155; color: white; }
+.btn-danger:hover { background: var(--danger); color: white; }
+
+.mission-section {
+    background: var(--card);
+    padding: 20px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    border: 1px solid #2d3748;
+}
+
+.weekly-bg { border: 1px solid #4a1d33; background: #1c1621; }
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.section-title { font-size: 1.1rem; margin: 0; }
+.accent-color { color: var(--accent); }
+
+.timer {
+    font-size: 0.7rem;
+    font-family: monospace;
+    background: #0f172a;
+    padding: 3px 8px;
+    border-radius: 5px;
+    color: #94a3b8;
+}
+
+/* Cards */
+.quest-card {
+    background: rgba(255,255,255,0.03);
+    padding: 15px;
+    border-radius: 15px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-left: 4px solid #334155;
+    transition: 0.3s;
+}
+
+.quest-card.completed {
+    opacity: 0.4;
+    border-left-color: var(--success);
+}
+
+.quest-info h4 { margin: 0; font-size: 1rem; }
+.quest-info p { margin: 4px 0 0; font-size: 0.8rem; color: #94a3b8; }
+
+.btn-claim {
+    border: none;
+    padding: 10px 15px;
+    border-radius: 10px;
+    font-weight: 800;
+    cursor: pointer;
+    min-width: 70px;
+    transition: 0.2s;
+}
+
+/* Toast Animation */
+#toast {
+    position: fixed;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--accent);
+    color: white;
+    padding: 15px 30px;
+    border-radius: 50px;
+    font-weight: bold;
+    box-shadow: 0 10px 20px rgba(255,0,122,0.3);
+    transition: 0.5s;
+    z-index: 999;
+}

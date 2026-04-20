@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPG Task</title>
+    <link rel="icon" type="image/RPG Ico.jpg" href="/image/RPG Ico.jpg">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="toast">LEVEL UP! 🚀</div>
+
+    <div class="app-container">
+        <div class="header-stats">
+            <div class="rank-container">
+                <span class="rank-badge" id="rank-title">VILLAGER</span>
+            </div>
+            <div class="xp-display">
+                <span id="xp-val">0</span> <small class="xp-label">XP</small>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar" id="xp-progress"></div>
+            </div>
+        </div>
+
+        <div class="control-panel">
+            <span class="panel-title">System Control</span>
+            <div class="btn-group">
+                <button class="btn-alt" onclick="resetProgress()">Reset Today</button>
+                <button class="btn-danger" onclick="resetAllXP()">Reset All Data</button>
+            </div>
+        </div>
+
+        <section class="mission-section">
+            <div class="section-header">
+                <h2 class="section-title">Daily Quest</h2>
+                <span class="timer" id="daily-timer">Resets in: --:--</span>
+            </div>
+            <div id="daily-container">
+                </div>
+        </section>
+
+        <section class="mission-section weekly-bg">
+            <div class="section-header">
+                <h2 class="section-title accent-color">Weekly Raid</h2>
+                <span class="timer" id="weekly-timer">-- Days left</span>
+            </div>
+            <div id="weekly-container">
+                </div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
