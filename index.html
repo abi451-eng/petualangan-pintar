@@ -1,56 +1,463 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RPG Task</title>
-    <link rel="icon" type="image/RPG Ico.jpg" href="/image/RPG Ico.jpg">
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#ff7ab6">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Petualangan Pintar</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; }
+  :root{
+    --p1:#ff7ab6; --p2:#ffd23f; --p3:#4ecdc4; --p4:#7c5cff; --p5:#ff8c42; --p6:#5cc8ff;
+    --green:#2ecc71; --red:#ff6b6b; --ink:#2d2a4a; --white:#fff;
+    --font:'Baloo 2','Comic Sans MS','Trebuchet MS',system-ui,sans-serif;
+  }
+  html,body{ height:100%; }
+  body{
+    font-family:var(--font); color:var(--ink);
+    background:linear-gradient(160deg,#fff3b0,#ffd6e8 55%,#c8f5ff);
+    overflow:hidden; -webkit-font-smoothing:antialiased;
+  }
+  #app{ height:100dvh; display:flex; flex-direction:column; max-width:560px; margin:0 auto; position:relative; }
+
+  /* Header */
+  header{
+    display:flex; align-items:center; gap:10px; padding:12px 14px;
+    flex:0 0 auto;
+  }
+  .hbtn{
+    background:var(--white); border:none; border-radius:18px; padding:8px 14px;
+    font-family:var(--font); font-size:20px; font-weight:800; color:var(--ink);
+    box-shadow:0 4px 0 rgba(0,0,0,.12); cursor:pointer; transition:transform .08s;
+  }
+  .hbtn:active{ transform:translateY(2px); box-shadow:0 2px 0 rgba(0,0,0,.12); }
+  .htitle{ flex:1; text-align:center; font-size:22px; font-weight:800; color:#5a3d8a; text-shadow:0 2px 0 #fff; }
+  .stars{
+    background:var(--white); border-radius:18px; padding:8px 14px; font-size:20px; font-weight:800;
+    box-shadow:0 4px 0 rgba(0,0,0,.12); color:#e6a700; white-space:nowrap;
+  }
+
+  main{ flex:1; overflow-y:auto; padding:6px 16px 24px; }
+
+  /* Home */
+  .hero{ text-align:center; margin:6px 0 14px; }
+  .mascot{ font-size:84px; display:inline-block; animation:bounce 1.6s ease-in-out infinite; filter:drop-shadow(0 8px 8px rgba(0,0,0,.12)); }
+  @keyframes bounce{ 0%,100%{transform:translateY(0) rotate(-3deg);} 50%{transform:translateY(-14px) rotate(3deg);} }
+  .gtitle{ font-size:34px; font-weight:800; color:#7c5cff; text-shadow:0 3px 0 #fff, 0 6px 12px rgba(124,92,255,.25); line-height:1.05; }
+  .gsub{ font-size:17px; color:#6b5b95; margin-top:4px; font-weight:700; }
+
+  .grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:6px; }
+  .card{
+    border:none; border-radius:26px; padding:18px 10px; cursor:pointer; color:#fff;
+    box-shadow:0 8px 0 rgba(0,0,0,.14), inset 0 -6px 12px rgba(0,0,0,.08);
+    display:flex; flex-direction:column; align-items:center; gap:6px; transition:transform .1s;
+    font-family:var(--font);
+  }
+  .card:active{ transform:translateY(4px) scale(.98); box-shadow:0 4px 0 rgba(0,0,0,.14); }
+  .card .ic{ font-size:46px; filter:drop-shadow(0 4px 4px rgba(0,0,0,.18)); }
+  .card .nm{ font-size:19px; font-weight:800; text-shadow:0 2px 2px rgba(0,0,0,.18); }
+  .c1{background:linear-gradient(145deg,#ff9ec9,#ff5fa2);} .c2{background:linear-gradient(145deg,#ffe066,#ffae00);}
+  .c3{background:linear-gradient(145deg,#6ee7df,#16b8ac);} .c4{background:linear-gradient(145deg,#a78bff,#6a3df0);}
+  .c5{background:linear-gradient(145deg,#ffb066,#ff7a1a);} .c6{background:linear-gradient(145deg,#7fd6ff,#2aa8ff);}
+
+  /* Quiz */
+  .prompt{ text-align:center; font-size:24px; font-weight:800; color:#5a3d8a; margin:6px 0 12px; min-height:30px; }
+  .stage-emoji{ font-size:120px; text-align:center; margin:6px 0 14px; filter:drop-shadow(0 10px 8px rgba(0,0,0,.12)); animation:pop .35s ease; }
+  @keyframes pop{ 0%{transform:scale(.4);opacity:0;} 100%{transform:scale(1);opacity:1;} }
+  .count-row{ display:flex; flex-wrap:wrap; justify-content:center; gap:8px; font-size:54px; margin:6px auto 14px; max-width:420px; }
+  .count-row span{ animation:pop .3s ease backwards; }
+
+  .options{ display:grid; grid-template-columns:1fr 1fr; gap:14px; max-width:440px; margin:0 auto; }
+  .opt{
+    border:none; border-radius:22px; padding:20px 8px; font-family:var(--font);
+    font-size:34px; font-weight:800; background:#fff; color:var(--ink); cursor:pointer;
+    box-shadow:0 6px 0 rgba(0,0,0,.12); transition:transform .08s; min-height:78px;
+  }
+  .opt:active{ transform:translateY(3px); box-shadow:0 3px 0 rgba(0,0,0,.12); }
+  .opt.good{ background:var(--green); color:#fff; animation:shake-good .4s; }
+  .opt.bad{ background:var(--red); color:#fff; animation:shake-bad .4s; }
+  @keyframes shake-good{ 0%,100%{transform:scale(1);} 40%{transform:scale(1.12);} }
+  @keyframes shake-bad{ 0%,100%{transform:translateX(0);} 25%{transform:translateX(-7px);} 75%{transform:translateX(7px);} }
+  .opt.colorbtn{ font-size:20px; color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.35); }
+
+  .sound-btn{ display:block; margin:0 auto 14px; background:#fff; border:none; border-radius:30px; padding:12px 22px; font-family:var(--font); font-size:22px; font-weight:800; color:#6a3df0; box-shadow:0 5px 0 rgba(0,0,0,.12); cursor:pointer; }
+  .sound-btn:active{ transform:translateY(2px); }
+
+  svg.shape{ display:block; margin:0 auto 14px; filter:drop-shadow(0 8px 6px rgba(0,0,0,.12)); animation:pop .35s ease; }
+
+  /* Adventure */
+  .scene{
+    position:relative; height:300px; border-radius:24px; margin:6px 0 10px; overflow:hidden;
+    box-shadow:inset 0 -20px 40px rgba(0,0,0,.08), 0 6px 0 rgba(0,0,0,.10);
+  }
+  .scene .obj{ position:absolute; font-size:40px; cursor:pointer; transition:transform .1s; }
+  .scene .obj:active{ transform:scale(.9); }
+  .find-banner{ text-align:center; font-size:22px; font-weight:800; color:#5a3d8a; margin:4px 0 8px; background:#fff; padding:8px; border-radius:16px; box-shadow:0 4px 0 rgba(0,0,0,.10); }
+  .spell-boxes{ display:flex; justify-content:center; gap:8px; flex-wrap:wrap; margin:8px 0 12px; }
+  .sbox{ width:52px; height:60px; border-radius:14px; background:#fff; box-shadow:0 4px 0 rgba(0,0,0,.12); display:flex; align-items:center; justify-content:center; font-size:32px; font-weight:800; color:#6a3df0; }
+  .sbox.filled{ background:#d6ffe0; color:#1e8e4f; }
+  .tiles{ display:flex; justify-content:center; gap:10px; flex-wrap:wrap; }
+  .tile{ width:54px; height:60px; border-radius:14px; border:none; background:linear-gradient(145deg,#a78bff,#6a3df0); color:#fff; font-family:var(--font); font-size:30px; font-weight:800; box-shadow:0 5px 0 rgba(0,0,0,.18); cursor:pointer; }
+  .tile:active{ transform:translateY(3px); }
+  .tile.used{ opacity:.25; pointer-events:none; }
+  .stage-pill{ text-align:center; font-weight:800; color:#6b5b95; margin-bottom:2px; }
+
+  /* Praise overlay */
+  #overlay{ position:absolute; inset:0; display:none; align-items:center; justify-content:center; z-index:30; background:rgba(45,42,74,.35); backdrop-filter:blur(2px); }
+  #overlay.show{ display:flex; animation:fade .2s; }
+  @keyframes fade{ from{opacity:0;} to{opacity:1;} }
+  .praise-card{ background:#fff; border-radius:30px; padding:26px 30px; text-align:center; box-shadow:0 14px 30px rgba(0,0,0,.25); animation:popbig .35s ease; }
+  @keyframes popbig{ 0%{transform:scale(.5);opacity:0;} 70%{transform:scale(1.08);} 100%{transform:scale(1);opacity:1;} }
+  .praise-card .pm{ font-size:80px; animation:bounce 1s infinite; }
+  .praise-card .pt{ font-size:34px; font-weight:800; color:#ff5fa2; margin-top:4px; }
+  .praise-card .ps{ font-size:30px; margin-top:6px; }
+  .confetti{ position:absolute; top:0; font-size:24px; animation:fall linear forwards; pointer-events:none; }
+  @keyframes fall{ to{ transform:translateY(110vh) rotate(360deg); opacity:.2; } }
+
+  /* Done screen */
+  .done{ text-align:center; padding:20px 6px; }
+  .done .big{ font-size:90px; animation:bounce 1.4s infinite; }
+  .done h2{ font-size:30px; color:#7c5cff; margin:8px 0; }
+  .done p{ font-size:20px; color:#6b5b95; font-weight:700; margin-bottom:18px; }
+  .bigbtn{ background:linear-gradient(145deg,#ffd23f,#ff9a00); border:none; border-radius:24px; padding:16px 28px; font-family:var(--font); font-size:22px; font-weight:800; color:#fff; text-shadow:0 2px 2px rgba(0,0,0,.2); box-shadow:0 6px 0 rgba(0,0,0,.18); cursor:pointer; margin:6px; }
+  .bigbtn:active{ transform:translateY(3px); }
+</style>
 </head>
 <body>
+<div id="app">
+  <header>
+    <button class="hbtn" id="backBtn" style="display:none" onclick="goHome()">⬅</button>
+    <div class="htitle" id="title">Petualangan Pintar</div>
+    <div class="stars" id="starCount">⭐ 0</div>
+  </header>
+  <main id="view"></main>
+  <div id="overlay"></div>
+</div>
 
-    <div id="toast">LEVEL UP! 🚀</div>
+<script>
+/* ============ STATE & AUDIO ============ */
+const STATE = { stars: 0, view: 'home' };
+let AC = null;
+function audio(){ if(!AC){ try{ AC = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } if(AC && AC.state==='suspended') AC.resume(); return AC; }
+function tone(freq, dur, type='sine', vol=0.18, delay=0){
+  const ac = audio(); if(!ac) return;
+  const o = ac.createOscillator(), g = ac.createGain();
+  o.type=type; o.frequency.value=freq;
+  o.connect(g); g.connect(ac.destination);
+  const t = ac.currentTime + delay;
+  g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t+0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001, t+dur);
+  o.start(t); o.stop(t+dur);
+}
+function sCorrect(){ [523,659,784,1047].forEach((f,i)=>tone(f,0.18,'triangle',0.18,i*0.08)); }
+function sWrong(){ tone(200,0.25,'sine',0.16); tone(150,0.3,'sine',0.14,0.08); }
+function sStar(){ [880,1175,1568].forEach((f,i)=>tone(f,0.2,'sine',0.14,i*0.06)); }
+function sTap(){ tone(440,0.06,'square',0.08); }
+function speak(text){
+  try{
+    if(!('speechSynthesis' in window)) return;
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang='id-ID'; u.rate=0.95; u.pitch=1.15;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
 
-    <div class="app-container">
-        <div class="header-stats">
-            <div class="rank-container">
-                <span class="rank-badge" id="rank-title">VILLAGER</span>
-            </div>
-            <div class="xp-display">
-                <span id="xp-val">0</span> <small class="xp-label">XP</small>
-            </div>
-            <div class="progress-container">
-                <div class="progress-bar" id="xp-progress"></div>
-            </div>
-        </div>
+/* ============ HELPERS ============ */
+const $ = id => document.getElementById(id);
+const view = $('view');
+const PRAISE = ['Hebat!','Pintar!','Keren!','Bagus sekali!','Kamu jago!','Mantap!','Wah, benar!','Pinter!'];
+const TRYAGAIN = ['Coba lagi ya!','Hampir benar!','Ayo coba lagi!','Semangat!'];
+const rand = arr => arr[Math.floor(Math.random()*arr.length)];
+function shuffle(a){ a=[...a]; for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function addStar(n=1){ STATE.stars+=n; $('starCount').textContent='⭐ '+STATE.stars; sStar(); }
+function setHeader(t, showBack){ $('title').textContent=t; $('backBtn').style.display=showBack?'block':'none'; }
 
-        <div class="control-panel">
-            <span class="panel-title">System Control</span>
-            <div class="btn-group">
-                <button class="btn-alt" onclick="resetProgress()">Reset Today</button>
-                <button class="btn-danger" onclick="resetAllXP()">Reset All Data</button>
-            </div>
-        </div>
+function praise(emoji){
+  const ov=$('overlay');
+  const word = rand(PRAISE);
+  ov.innerHTML = `<div class="praise-card"><div class="pm">🦉</div><div class="pt">${word}</div><div class="ps">${emoji||'⭐⭐⭐'}</div></div>`;
+  ov.classList.add('show');
+  for(let i=0;i<14;i++){
+    const c=document.createElement('div'); c.className='confetti';
+    c.textContent=rand(['⭐','🎉','✨','💛','💖','🌟']);
+    c.style.left=Math.random()*100+'%';
+    c.style.animationDuration=(1+Math.random())+'s';
+    c.style.fontSize=(18+Math.random()*18)+'px';
+    ov.appendChild(c);
+  }
+  speak(word);
+  setTimeout(()=>ov.classList.remove('show'),1300);
+}
+function showTryAgain(){ const w=rand(TRYAGAIN); speak(w); }
 
-        <section class="mission-section">
-            <div class="section-header">
-                <h2 class="section-title">Daily Quest</h2>
-                <span class="timer" id="daily-timer">Resets in: --:--</span>
-            </div>
-            <div id="daily-container">
-                </div>
-        </section>
-
-        <section class="mission-section weekly-bg">
-            <div class="section-header">
-                <h2 class="section-title accent-color">Weekly Raid</h2>
-                <span class="timer" id="weekly-timer">-- Days left</span>
-            </div>
-            <div id="weekly-container">
-                </div>
-        </section>
+/* ============ HOME ============ */
+const WORLDS = [
+  {id:'huruf', nm:'Huruf', ic:'🔤', c:'c1', fn:()=>startHuruf()},
+  {id:'angka', nm:'Angka', ic:'🔢', c:'c2', fn:()=>startAngka()},
+  {id:'warna', nm:'Warna', ic:'🎨', c:'c3', fn:()=>startWarna()},
+  {id:'bentuk',nm:'Bentuk',ic:'🔺', c:'c4', fn:()=>startBentuk()},
+  {id:'hewan', nm:'Hewan', ic:'🐶', c:'c5', fn:()=>startHewan()},
+  {id:'petualangan', nm:'Petualangan', ic:'🗺️', c:'c6', fn:()=>startAdventure()},
+];
+function goHome(){
+  STATE.view='home'; setHeader('Petualangan Pintar', false);
+  speechSynthesis && speechSynthesis.cancel();
+  view.innerHTML = `
+    <div class="hero">
+      <div class="mascot" onclick="speak('Halo! Ayo kita belajar sambil bermain!')">🦉</div>
+      <div class="gtitle">Petualangan<br>Pintar</div>
+      <div class="gsub">Ayo pilih dunia belajarmu! 👇</div>
     </div>
+    <div class="grid" id="grid"></div>`;
+  const g=$('grid');
+  WORLDS.forEach(w=>{
+    const b=document.createElement('button');
+    b.className='card '+w.c;
+    b.innerHTML=`<div class="ic">${w.ic}</div><div class="nm">${w.nm}</div>`;
+    b.onclick=()=>{ sTap(); w.fn(); };
+    g.appendChild(b);
+  });
+}
 
-    <script src="script.js"></script>
+/* ============ GENERIC QUIZ RUNNER ============ */
+function runQuiz(cfg){
+  // cfg: {title, total, makeQuestion()=> {html, options:[{label,correct,style?}], onPraise}}
+  let q=0, correct=0;
+  setHeader(cfg.title, true);
+  function next(){
+    if(q>=cfg.total){ doneScreen(cfg.title, correct); return; }
+    q++;
+    const data = cfg.makeQuestion();
+    let optsHtml = data.options.map((o,i)=>
+      `<button class="opt ${o.cls||''}" data-i="${i}" ${o.style?`style="${o.style}"`:''}>${o.label}</button>`).join('');
+    view.innerHTML = `
+      <div class="stage-pill">Soal ${q} dari ${cfg.total}</div>
+      <div class="prompt">${data.prompt}</div>
+      ${data.visual||''}
+      <div class="options">${optsHtml}</div>`;
+    if(data.speakText) speak(data.speakText);
+    view.querySelectorAll('.opt').forEach(btn=>{
+      btn.onclick=()=>{
+        const o = data.options[+btn.dataset.i];
+        if(o.correct){
+          btn.classList.add('good'); sCorrect(); correct++; addStar();
+          view.querySelectorAll('.opt').forEach(b=>b.disabled=true);
+          praise(data.rewardEmoji);
+          setTimeout(next, 1300);
+        } else {
+          btn.classList.add('bad'); sWrong(); showTryAgain();
+          setTimeout(()=>btn.classList.remove('bad'),450);
+        }
+      };
+    });
+  }
+  next();
+}
+function doneScreen(title, correct){
+  setHeader(title, true);
+  speak('Hebat! Kamu selesai!');
+  view.innerHTML = `
+    <div class="done">
+      <div class="big">🏆</div>
+      <h2>Yeay! Selesai!</h2>
+      <p>Kamu mengumpulkan ${correct} ⭐ di dunia ini!</p>
+      <button class="bigbtn" onclick="sTap();goHome()">🏠 Menu</button>
+      <button class="bigbtn" onclick="sTap();replay()">🔁 Main Lagi</button>
+    </div>`;
+}
+let _lastStart=goHome;
+function replay(){ _lastStart(); }
+
+/* ============ DUNIA HURUF ============ */
+const HURUF = [
+  {l:'A',e:'🍎',w:'Apel'},{l:'B',e:'⚽',w:'Bola'},{l:'C',e:'🌶️',w:'Cabai'},
+  {l:'D',e:'🍃',w:'Daun'},{l:'E',e:'🦅',w:'Elang'},{l:'G',e:'🐘',w:'Gajah'},
+  {l:'I',e:'🐟',w:'Ikan'},{l:'K',e:'🐱',w:'Kucing'},{l:'M',e:'🌸',w:'Mawar'},
+  {l:'P',e:'🍌',w:'Pisang'},{l:'R',e:'🏠',w:'Rumah'},{l:'S',e:'👟',w:'Sepatu'},
+  {l:'T',e:'🎒',w:'Tas'},{l:'U',e:'🐍',w:'Ular'},{l:'B',e:'🌹',w:'Bunga'},
+];
+function startHuruf(){ _lastStart=startHuruf;
+  runQuiz({ title:'🔤 Dunia Huruf', total:6, makeQuestion(){
+    const item=rand(HURUF);
+    const wrongs=shuffle(HURUF.filter(h=>h.l!==item.l)).slice(0,3).map(h=>h.l);
+    const opts=shuffle([item.l,...wrongs]).map(l=>({label:l, correct:l===item.l}));
+    return {
+      prompt:`Huruf pertama "${item.w}"?`,
+      visual:`<div class="stage-emoji">${item.e}</div>`,
+      speakText:`Huruf pertama dari ${item.w}?`,
+      options:opts, rewardEmoji:item.e
+    };
+  }});
+}
+
+/* ============ DUNIA ANGKA ============ */
+const FRUITS=['🍓','🍎','🍌','🍇','🍊','⭐','🐥','🎈','🍪','🐠'];
+function startAngka(){ _lastStart=startAngka;
+  runQuiz({ title:'🔢 Dunia Angka', total:6, makeQuestion(){
+    const n=Math.floor(Math.random()*9)+1;
+    const f=rand(FRUITS);
+    const row=Array.from({length:n}).map((_,i)=>`<span style="animation-delay:${i*0.05}s">${f}</span>`).join('');
+    let set=new Set([n]);
+    while(set.size<4){ let x=n+(Math.floor(Math.random()*5)-2); if(x>=1&&x<=12) set.add(x); }
+    const opts=shuffle([...set]).map(x=>({label:x, correct:x===n}));
+    return {
+      prompt:`Ada berapa? 🔢`,
+      visual:`<div class="count-row">${row}</div>`,
+      speakText:'Ayo hitung, ada berapa?',
+      options:opts, rewardEmoji:'🔢'
+    };
+  }});
+}
+
+/* ============ DUNIA WARNA ============ */
+const WARNA=[
+  {n:'Merah',c:'#ff4d4d',e:'🍎'},{n:'Kuning',c:'#ffd000',e:'🍌'},
+  {n:'Hijau',c:'#2ecc71',e:'🍃'},{n:'Biru',c:'#3aa0ff',e:'🐳'},
+  {n:'Oranye',c:'#ff8c1a',e:'🍊'},{n:'Ungu',c:'#9b51e0',e:'🍇'},
+  {n:'Merah Muda',c:'#ff7ab6',e:'🌸'},{n:'Coklat',c:'#a0522d',e:'🐻'},
+];
+function startWarna(){ _lastStart=startWarna;
+  runQuiz({ title:'🎨 Dunia Warna', total:6, makeQuestion(){
+    const item=rand(WARNA);
+    const wrongs=shuffle(WARNA.filter(w=>w.n!==item.n)).slice(0,3);
+    const opts=shuffle([item,...wrongs]).map(w=>({label:w.n, correct:w.n===item.n, cls:'colorbtn', style:`background:${w.c}`}));
+    return {
+      prompt:`Apa warna benda ini?`,
+      visual:`<div style="text-align:center;margin:6px 0 14px"><div style="display:inline-block;width:150px;height:150px;border-radius:30px;background:${item.c};box-shadow:0 10px 8px rgba(0,0,0,.15);"></div></div>`,
+      speakText:'Apa warna ini?',
+      options:opts, rewardEmoji:item.e
+    };
+  }});
+}
+
+/* ============ DUNIA BENTUK ============ */
+const BENTUK={
+  Lingkaran:`<svg class="shape" width="150" height="150"><circle cx="75" cy="75" r="68" fill="#ff5fa2"/></svg>`,
+  Kotak:`<svg class="shape" width="150" height="150"><rect x="10" y="10" width="130" height="130" rx="16" fill="#3aa0ff"/></svg>`,
+  Segitiga:`<svg class="shape" width="160" height="150"><polygon points="80,8 152,140 8,140" fill="#2ecc71"/></svg>`,
+  Bintang:`<svg class="shape" width="160" height="150"><polygon points="80,6 100,58 156,58 110,92 128,146 80,112 32,146 50,92 4,58 60,58" fill="#ffce00"/></svg>`,
+  'Persegi Panjang':`<svg class="shape" width="170" height="120"><rect x="8" y="20" width="154" height="80" rx="14" fill="#9b51e0"/></svg>`,
+  Hati:`<svg class="shape" width="160" height="150"><path d="M80 140 C10 90 18 30 56 30 C72 30 80 44 80 44 C80 44 88 30 104 30 C142 30 150 90 80 140 Z" fill="#ff6b9d"/></svg>`,
+};
+function startBentuk(){ _lastStart=startBentuk;
+  const names=Object.keys(BENTUK);
+  runQuiz({ title:'🔺 Dunia Bentuk', total:6, makeQuestion(){
+    const name=rand(names);
+    const wrongs=shuffle(names.filter(n=>n!==name)).slice(0,3);
+    const opts=shuffle([name,...wrongs]).map(n=>({label:n, correct:n===name, cls:'', style:'font-size:20px'}));
+    return {
+      prompt:`Ini bentuk apa?`,
+      visual:BENTUK[name],
+      speakText:'Ini bentuk apa?',
+      options:opts, rewardEmoji:'🔺'
+    };
+  }});
+}
+
+/* ============ DUNIA HEWAN ============ */
+const HEWAN=[
+  {e:'🐶',n:'Anjing',s:'Guk guk'},{e:'🐱',n:'Kucing',s:'Meong'},
+  {e:'🐮',n:'Sapi',s:'Mooo'},{e:'🐔',n:'Ayam',s:'Kukuruyuk'},
+  {e:'🐸',n:'Katak',s:'Kwek kwek'},{e:'🐑',n:'Domba',s:'Mbeee'},
+  {e:'🦆',n:'Bebek',s:'Kwek kwek'},{e:'🐷',n:'Babi',s:'Oik oik'},
+  {e:'🦁',n:'Singa',s:'Aummm'},{e:'🐴',n:'Kuda',s:'Hiiii'},
+];
+function startHewan(){ _lastStart=startHewan;
+  let q=0, correct=0; setHeader('🐶 Dunia Hewan', true);
+  function next(){
+    if(q>=6){ doneScreen('🐶 Dunia Hewan', correct); return; }
+    q++;
+    const item=rand(HEWAN);
+    const wrongs=shuffle(HEWAN.filter(h=>h.n!==item.n)).slice(0,3);
+    const opts=shuffle([item,...wrongs]);
+    view.innerHTML=`
+      <div class="stage-pill">Soal ${q} dari 6</div>
+      <div class="prompt">Hewan apa ini?</div>
+      <div class="stage-emoji">${item.e}</div>
+      <button class="sound-btn" id="sb">🔊 Dengar Suaranya</button>
+      <div class="options">${opts.map((o,i)=>`<button class="opt" data-i="${i}" style="font-size:24px">${o.n}</button>`).join('')}</div>`;
+    speak('Hewan apa ini?');
+    $('sb').onclick=()=>{ sTap(); speak(item.n+' bunyinya '+item.s); };
+    view.querySelectorAll('.opt').forEach(btn=>{
+      btn.onclick=()=>{
+        const o=opts[+btn.dataset.i];
+        if(o.n===item.n){ btn.classList.add('good'); sCorrect(); correct++; addStar();
+          view.querySelectorAll('.opt').forEach(b=>b.disabled=true); praise(item.e); setTimeout(next,1300);
+        } else { btn.classList.add('bad'); sWrong(); showTryAgain(); setTimeout(()=>btn.classList.remove('bad'),450); }
+      };
+    });
+  }
+  next();
+}
+
+/* ============ DUNIA PETUALANGAN ============ */
+const STAGES=[
+  {scene:'Kamar Tidur', bg:'linear-gradient(160deg,#ffe9b0,#ffc1d6)', target:'🎒', word:'TAS',   decoys:['🛏️','🧸','🪟','💡','👕','📚','⏰','🪑']},
+  {scene:'Ruang Tamu',  bg:'linear-gradient(160deg,#cdeffd,#e6dbff)', target:'📕', word:'BUKU',  decoys:['🛋️','📺','🪴','🖼️','☕','🕰️','🪟','🧦']},
+  {scene:'Taman',       bg:'linear-gradient(160deg,#d6ffcf,#bdf0ff)', target:'⚽', word:'BOLA',  decoys:['🌳','🌷','🦋','🌞','🐝','🌻','🍄','🐌']},
+  {scene:'Dapur',       bg:'linear-gradient(160deg,#fff0c2,#ffd9c2)', target:'🥛', word:'GELAS', decoys:['🍳','🔪','🍎','🥄','🧂','🫖','🍞','🧅']},
+  {scene:'Sekolah',     bg:'linear-gradient(160deg,#d9e7ff,#ffe0f0)', target:'✏️', word:'PENSIL',decoys:['🏫','📐','📚','🎒','🖍️','📋','🧮','🖇️']},
+];
+function startAdventure(){ _lastStart=startAdventure;
+  let idx=0;
+  function loadStage(){
+    if(idx>=STAGES.length){ doneScreen('🗺️ Petualangan', STAGES.length); return; }
+    const st=STAGES[idx];
+    setHeader('🗺️ '+st.scene, true);
+    // build scattered objects
+    const items=shuffle([st.target,...shuffle(st.decoys).slice(0,7)]);
+    const positions=[];
+    function pos(){ let t,l,ok,tries=0; do{ t=10+Math.random()*72; l=8+Math.random()*78; ok=positions.every(p=>Math.abs(p.t-t)>14||Math.abs(p.l-l)>14); tries++; }while(!ok&&tries<40); positions.push({t,l}); return {t,l}; }
+    const objHtml=items.map((em,i)=>{ const p=pos(); return `<div class="obj" data-em="${em}" style="top:${p.t}%;left:${p.l}%">${em}</div>`; }).join('');
+    view.innerHTML=`
+      <div class="stage-pill">Tahap ${idx+1} dari ${STAGES.length}</div>
+      <div class="find-banner">🔍 Ayo cari <b style="color:#ff5fa2">${st.word}</b>!</div>
+      <div class="scene" style="background:${st.bg}">${objHtml}</div>`;
+    speak('Ayo cari '+st.word);
+    view.querySelectorAll('.obj').forEach(o=>{
+      o.onclick=()=>{
+        if(o.dataset.em===st.target){
+          sCorrect(); addStar(); o.style.transform='scale(1.6)';
+          praise(st.target);
+          setTimeout(()=>spellStage(st),1100);
+        } else { sWrong(); o.animate([{transform:'rotate(-8deg)'},{transform:'rotate(8deg)'},{transform:'rotate(0)'}],{duration:300}); showTryAgain(); }
+      };
+    });
+  }
+  function spellStage(st){
+    setHeader('🗺️ '+st.scene, true);
+    const letters=st.word.split('');
+    let need=0;
+    const tiles=shuffle(letters);
+    view.innerHTML=`
+      <div class="stage-pill">Bagus! Sekarang susun hurufnya 👇</div>
+      <div class="stage-emoji" style="font-size:90px">${st.target}</div>
+      <div class="spell-boxes" id="boxes">${letters.map((_,i)=>`<div class="sbox" id="b${i}"></div>`).join('')}</div>
+      <div class="tiles" id="tiles">${tiles.map((l,i)=>`<button class="tile" data-l="${l}" data-i="${i}">${l}</button>`).join('')}</div>`;
+    speak('Susun huruf '+st.word.split('').join(' '));
+    view.querySelectorAll('.tile').forEach(t=>{
+      t.onclick=()=>{
+        if(t.dataset.l===letters[need]){
+          const box=$('b'+need); box.textContent=letters[need]; box.classList.add('filled');
+          t.classList.add('used'); sTap(); tone(523+need*80,0.15,'triangle',0.16);
+          need++;
+          if(need>=letters.length){
+            sCorrect(); addStar(2); speak(st.word+'. Hebat!');
+            praise(st.target);
+            setTimeout(()=>{ idx++; loadStage(); },1400);
+          }
+        } else { sWrong(); t.animate([{transform:'translateX(-6px)'},{transform:'translateX(6px)'},{transform:'translateX(0)'}],{duration:250}); }
+      };
+    });
+  }
+  loadStage();
+}
+
+/* ============ INIT ============ */
+goHome();
+document.body.addEventListener('click', ()=>audio(), {once:true});
+</script>
 </body>
 </html>
